@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Reading Practice Test</title>
+    <style>
+        :root {
+            --primary: #0563bb;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --correct: #2e7d32;
+            --incorrect: #c62828;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .reading-passage {
+            background: #eef5fc;
+            padding: 20px;
+            border-left: 5px solid var(--primary);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .reading-passage h3 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        .question-card {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .options label {
+            display: block;
+            margin: 8px 0;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .options label:hover {
+            background-color: #f0f4f8;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button.btn-submit {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button.btn-submit:hover {
+            background-color: #03498b;
+        }
+
+        #results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .score-board {
+            text-align: center;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .score-board h2 {
+            margin: 0;
+            color: var(--correct);
+            font-size: 28px;
+        }
+
+        .feedback-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 6px solid;
+        }
+
+        .feedback-item.correct {
+            background-color: #edf7ed;
+            border-color: var(--correct);
+        }
+
+        .feedback-item.incorrect {
+            background-color: #fdeded;
+            border-color: var(--incorrect);
+        }
+
+        .translation {
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>IELTS Academic Reading Test</h1>
+
+    <div class="reading-passage">
+        <h3>Passage: The History of Renewable Energy</h3>
+        <p>
+            Humanity has relied on renewable energy for thousands of years. Early civilizations utilized wood for heat and cooking, while wind and water powered ships and grain mills. The Industrial Revolution shifted global energy dependency toward fossil fuels like coal and oil due to their high energy density and convenience. However, the environmental impact of greenhouse gas emissions became evident in the late 20th century.
+        </p>
+        <p>
+            Modern renewable energy systems have advanced rapidly. Solar photovoltaic cells convert sunlight directly into electricity, while modern wind turbines generate significant power even in low-wind conditions. Today, governments and corporations are investing heavily in green technology to combat climate change, reduce pollution, and ensure long-term energy security. Despite these advancements, challenges such as energy storage and high initial installation costs remain critical hurdles for global implementation.
+        </p>
+    </div>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+        <button type="button" class="btn-submit" onclick="submitQuiz()">Submit Answers / Enviar Respuestas</button>
+    </form>
+
+    <div id="results">
+        <div class="score-board">
+            <h2 id="scoreText"></h2>
+        </div>
+        <div id="feedbackContainer"></div>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    {
+        q: "1. What did early civilizations use to power grain mills?",
+        options: ["Fossil fuels", "Wind and water", "Solar power", "Wood"],
+        answer: 1,
+        transQ: "1. ¿Qué utilizaban las primeras civilizaciones para hacer funcionar los molinos de grano?",
+        explanationEN: "Early civilizations utilized wind and water to power ships and grain mills.",
+        explanationES: "Las primeras civilizaciones utilizaban el viento y el agua para hacer funcionar barcos y molinos de grano."
+    },
+    {
+        q: "2. Why did the Industrial Revolution shift energy dependency to fossil fuels?",
+        options: ["They were cheaper to produce", "They were less polluting", "High energy density and convenience", "Solar energy was unavailable"],
+        answer: 2,
+        transQ: "2. ¿Por qué la Revolución Industrial cambió la dependencia energética a los combustibles fósiles?",
+        explanationEN: "Fossil fuels were preferred due to their high energy density and convenience.",
+        explanationES: "Se prefirieron los combustibles fósiles debido a su alta densidad energética y comodidad."
+    },
+    {
+        q: "3. When did the environmental impact of greenhouse gases become evident?",
+        options: ["In the 18th century", "In the early 19th century", "In the late 20th century", "In the 21st century"],
+        answer: 2,
+        transQ: "3. ¿Cuándo se hizo evidente el impacto ambiental de los gases de efecto invernadero?",
+        explanationEN: "The environmental impact became evident in the late 20th century.",
+        explanationES: "El impacto ambiental se hizo evidente a finales del siglo XX."
+    },
+    {
+        q: "4. What do solar photovoltaic cells do?",
+        options: ["Convert wind into power", "Store heat from the sun", "Convert sunlight directly into electricity", "Reduce installation costs"],
+        answer: 2,
+        transQ: "4. ¿Qué hacen las células solares fotovoltaicas?",
+        explanationEN: "Solar photovoltaic cells convert sunlight directly into electricity.",
+        explanationES: "Las células solares fotovoltaicas convierten la luz solar directamente en electricidad."
+    },
+    {
+        q: "5. Modern wind turbines can generate power even in low-wind conditions.",
+        options: ["True", "False", "Not Given"],
+        answer: 0,
+        transQ: "5. Las turbinas eólicas modernas pueden generar energía incluso en condiciones de poco viento.",
+        explanationEN: "The text states modern turbines generate power even in low-wind conditions.",
+        explanationES: "El texto afirma que las turbinas modernas generan energía incluso en condiciones de poco viento."
+    },
+    {
+        q: "6. Why are governments investing heavily in green technology?",
+        options: ["To eliminate all electricity bills", "To combat climate change and ensure energy security", "To stop using wood for heating", "To replace all factories"],
+        answer: 1,
+        transQ: "6. ¿Por qué los gobiernos están invirtiendo fuertemente en tecnología verde?",
+        explanationEN: "They invest to combat climate change, reduce pollution, and ensure energy security.",
+        explanationES: "Invierten para combatir el cambio climático, reducir la contaminación y garantizar la seguridad energética."
+    },
+    {
+        q: "7. Which of the following is mentioned as a current challenge for renewables?",
+        options: ["Lack of sunlight", "High initial installation costs", "Public rejection", "Scarcity of wind"],
+        answer: 1,
+        transQ: "7. ¿Cuál de los siguientes puntos se menciona como un desafío actual para las renovables?",
+        explanationEN: "High initial installation costs and energy storage remain critical hurdles.",
+        explanationES: "Los altos costos iniciales de instalación y el almacenamiento de energía siguen siendo obstáculos críticos."
+    },
+    {
+        q: "8. Wood was primarily used by early civilizations for...",
+        options: ["Building ships", "Heat and cooking", "Industrial manufacturing", "Generating electricity"],
+        answer: 1,
+        transQ: "8. La madera se usaba principalmente en las primeras civilizaciones para...",
+        explanationEN: "Early civilizations utilized wood for heat and cooking.",
+        explanationES: "Las primeras civilizaciones utilizaban la madera para calefacción y cocina."
+    },
+    {
+        q: "9. Energy storage is no longer a problem for modern renewable technology.",
+        options: ["True", "False", "Not Given"],
+        answer: 1,
+        transQ: "9. El almacenamiento de energía ya no es un problema para la tecnología renovable moderna.",
+        explanationEN: "False, because the text specifies that energy storage remains a critical hurdle.",
+        explanationES: "Falso, porque el texto especifica que el almacenamiento de energía sigue siendo un obstáculo crítico."
+    },
+    {
+        q: "10. Coal and oil are examples of:",
+        options: ["Renewable energy", "Fossil fuels", "Green technology", "Photovoltaic systems"],
+        answer: 1,
+        transQ: "10. El carbón y el petróleo son ejemplos de:",
+        explanationEN: "The text explicitly names coal and oil as fossil fuels.",
+        explanationES: "El texto nombra explícitamente al carbón y al petróleo como combustibles fósiles."
+    }
+];
+
+// Cargar preguntas dinámicamente
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    let html = '';
+
+    quizData.forEach((item, index) => {
+        html += `
+            <div class="question-card">
+                <div class="question-title">${item.q}</div>
+                <div class="translation">${item.transQ}</div>
+                <div class="options">
+        `;
+        
+        item.options.forEach((opt, optIndex) => {
+            html += `
+                <label>
+                    <input type="radio" name="q${index}" value="${optIndex}">
+                    ${opt}
+                </label>
+            `;
+        });
+
+        html += `</div></div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+// Evaluar el examen
+function submitQuiz() {
+    let score = 0;
+    const feedbackContainer = document.getElementById('feedbackContainer');
+    feedbackContainer.innerHTML = '';
+
+    quizData.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        const selectedVal = selected ? parseInt(selected.value) : -1;
+        const isCorrect = selectedVal === item.answer;
+
+        if (isCorrect) score++;
+
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = `feedback-item ${isCorrect ? 'correct' : 'incorrect'}`;
+        
+        const userChoiceText = selectedVal !== -1 ? item.options[selectedVal] : "Not answered / No respondida";
+        const correctChoiceText = item.options[item.answer];
+
+        feedbackDiv.innerHTML = `
+            <strong>Question ${index + 1}:</strong> ${isCorrect ? 'Correct ✅' : 'Incorrect ❌'}<br>
+            <strong>Your answer:</strong> ${userChoiceText}<br>
+            <strong>Correct answer (EN):</strong> ${correctChoiceText}<br>
+            <div class="translation"><strong>Explicación (ES):</strong> ${item.explanationES}</div>
+            <div class="translation"><strong>Explanation (EN):</strong> ${item.explanationEN}</div>
+        `;
+
+        feedbackContainer.appendChild(feedbackDiv);
+    });
+
+    document.getElementById('scoreText').innerText = `Your Score: ${score} / 10`;
+    document.getElementById('results').style.display = 'block';
+    
+    // Desplazar la vista hacia los resultados
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Inicializar la página
+renderQuestions();
+</script>
+
+</body>
+</html>
